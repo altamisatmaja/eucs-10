@@ -1,34 +1,6 @@
 @extends('layouts.apps')
 
-@section('title', 'Analisis')
-
 @section('content')
-    @php
-        const EUCS_DIMENSIONS = [
-            'Content' => ['x11', 'x12', 'x13', 'x14', 'x15'],
-            'Accuracy' => ['x21', 'x22', 'x23', 'x24', 'x25'],
-            'Format' => ['x31', 'x32', 'x33', 'x34', 'x35'],
-            'Ease of Use' => ['x41', 'x42', 'x43', 'x44', 'x45'],
-            'Timeliness' => ['x51', 'x52', 'x53', 'x54', 'x55'],
-            'User Satisfaction' => ['y1', 'y2', 'y3', 'y4', 'y5'],
-        ];
-
-        const ACHIEVEMENT_LEVELS = [
-            ['min' => 75.01, 'max' => 100, 'label' => 'Sangat Tinggi'],
-            ['min' => 58.34, 'max' => 75.01, 'label' => 'Tinggi'],
-            ['min' => 41.66, 'max' => 58.34, 'label' => 'Kurang'],
-            ['min' => 24.99, 'max' => 41.66, 'label' => 'Rendah'],
-            ['min' => 0, 'max' => 24.99, 'label' => 'Sangat Rendah'],
-        ];
-
-        const SATISFACTION_LEVELS = [
-            ['min' => 4.1, 'max' => 5.0, 'label' => 'Sangat Puas'],
-            ['min' => 3.1, 'max' => 4.0, 'label' => 'Puas'],
-            ['min' => 2.1, 'max' => 3.0, 'label' => 'Cukup Puas'],
-            ['min' => 1.1, 'max' => 2.0, 'label' => 'Kurang Puas'],
-            ['min' => 0.0, 'max' => 1.0, 'label' => 'Sangat Tidak Puas'],
-        ];
-    @endphp
     <div class="pt-6 px-4 w-full">
         @if (!$dataExists)
             <div class="bg-white rounded-lg shadow p-6 mb-6">
@@ -39,7 +11,7 @@
             <h1 class="text-2xl font-bold text-gray-800 mb-6">Hasil Analisis EUCS</h1>
 
             <!-- Summary Card -->
-            <div class="bg-white rounded-lg  mb-6">
+            <div class="bg-white rounded-lg shadow p-6 mb-6">
                 <h2 class="text-xl font-semibold mb-4">Ringkasan Hasil</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     @foreach ($results['statistics'] as $dimension => $stats)
@@ -58,7 +30,7 @@
                                         class="font-medium">{{ $results['achievement'][$dimension]['interpretation'] }}</span>
                                 </p>
                                 <p class="text-sm text-gray-600">Tingkat Kepuasan:
-                                    <span class="font-medium @satisfactionColor($results['achievement'][$dimension]['satisfaction'])">
+                                    <span class="font-medium @getSatisfactionColorClass($results['achievement'][$dimension]['satisfaction'])">
                                         {{ $results['achievement'][$dimension]['satisfaction'] }}
                                     </span>
                                 </p>
@@ -69,7 +41,7 @@
             </div>
 
             <!-- Detailed Statistics -->
-            <div class="bg-white rounded-lg mb-6">
+            <div class="bg-white rounded-lg shadow p-6 mb-6">
                 <h2 class="text-xl font-semibold mb-4">Statistik Detail</h2>
                 <div class="overflow-x-auto">
                     <table class="min-w-full rounded border">
@@ -108,7 +80,7 @@
                                         {{ $results['achievement'][$dimension]['interpretation'] }}
                                     </td>
                                     <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
-                                        <span class="@satisfactionColor($results['achievement'][$dimension]['satisfaction'])">
+                                        <span class="@getSatisfactionColorClass($results['achievement'][$dimension]['satisfaction'])">
                                             {{ $results['achievement'][$dimension]['satisfaction'] }}
                                         </span>
                                     </td>
@@ -124,13 +96,13 @@
             </div>
 
             <!-- Interpretation Guide -->
-            <div class="bg-white rounded-lg  pb-6">
+            <div class="bg-white rounded-lg shadow p-6">
                 <h2 class="text-xl font-semibold mb-4">Panduan Interpretasi</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <h3 class="font-medium text-lg mb-2">Tingkat Pencapaian</h3>
                         <ul class="space-y-2">
-                            @foreach (ACHIEVEMENT_LEVELS as $level)
+                            @foreach ([['min' => 75.01, 'max' => 100, 'label' => 'Sangat Tinggi'], ['min' => 58.34, 'max' => 75.01, 'label' => 'Tinggi'], ['min' => 41.66, 'max' => 58.34, 'label' => 'Kurang'], ['min' => 24.99, 'max' => 41.66, 'label' => 'Rendah'], ['min' => 0, 'max' => 24.99, 'label' => 'Sangat Rendah']] as $level)
                                 <li class="text-sm">
                                     <span class="font-medium">{{ $level['label'] }}:</span>
                                     {{ $level['min'] }}% - {{ $level['max'] }}%
@@ -141,7 +113,7 @@
                     <div>
                         <h3 class="font-medium text-lg mb-2">Tingkat Kepuasan</h3>
                         <ul class="space-y-2">
-                            @foreach (SATISFACTION_LEVELS as $level)
+                            @foreach ([['min' => 4.1, 'max' => 5.0, 'label' => 'Sangat Puas'], ['min' => 3.1, 'max' => 4.0, 'label' => 'Puas'], ['min' => 2.1, 'max' => 3.0, 'label' => 'Cukup Puas'], ['min' => 1.1, 'max' => 2.0, 'label' => 'Kurang Puas'], ['min' => 0.0, 'max' => 1.0, 'label' => 'Sangat Tidak Puas']] as $level)
                                 <li class="text-sm">
                                     <span class="font-medium">{{ $level['label'] }}:</span>
                                     Skor {{ $level['min'] }} - {{ $level['max'] }}

@@ -67,12 +67,7 @@
                     </a>
                 </div>
 
-                <div class="mt-10 flex justify-center">
-                    <div class="w-full lg:w-4/5 h-[700px] rounded-xl overflow-hidden">
-                        <img src="https://sdmntprnorthcentralus.oaiusercontent.com/files/00000000-6634-622f-ae46-7013e432825e/raw?se=2025-05-31T09%3A14%3A40Z&sp=r&sv=2024-08-04&sr=b&scid=862335c3-f302-5d98-96b2-49ff9034e2fb&skoid=add8ee7d-5fc7-451e-b06e-a82b2276cf62&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-05-31T08%3A08%3A19Z&ske=2025-06-01T08%3A08%3A19Z&sks=b&skv=2024-08-04&sig=5yusRV2Dau%2BLD%2BzBJevr1nivRPSIBsAnji3ASasFGRg%3D"
-                            class="w-full h-[800px] object-cover" alt="Cover Image" />
-                    </div>
-                </div>
+          
 
 
             </div>

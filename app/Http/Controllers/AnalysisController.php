@@ -67,14 +67,9 @@ class AnalysisController extends Controller
                 'reference' => $reference,
                 'dataExists' => true
             ]);
-        } catch (ValidationException $e) {
-            return $this->renderErrorView(null, $e->getMessage());
         } catch (\Exception $e) {
             Log::error('AnalysisController error: ' . $e->getMessage());
-            return $this->renderErrorView(
-                $request->query('references'),
-                'Terjadi kesalahan saat memproses data. Silakan coba lagi.'
-            );
+            return redirect()->back();
         }
     }
 
@@ -95,22 +90,6 @@ class AnalysisController extends Controller
         ]);
     }
 
-    /**
-     * Render error view with message
-     *
-     * @param int|null $reference
-     * @param string $message
-     * @return \Illuminate\View\View
-     */
-    protected function renderErrorView(?int $reference, string $message)
-    {
-        return view('analysis.index', [
-            'results' => null,
-            'reference' => $reference,
-            'dataExists' => false,
-            'errorMessage' => $message
-        ]);
-    }
 
     /**
      * Check if grouped data is empty

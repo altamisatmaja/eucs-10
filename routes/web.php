@@ -47,5 +47,5 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/data/respondent/{id}', [DataController::class, 'updateRespondent'])->name('data.updateRespondent');
     Route::delete('/data/respondent/{id}', [DataController::class, 'destroyRespondent'])->name('data.destroyRespondent');
 
-    Route::get('/analysis', [AnalysisController::class, 'index'])->name('analysis');
+    Route::get('/analysis/eucs', [AnalysisController::class, 'index'])->name('analysis');
 });
