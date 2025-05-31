@@ -1,5 +1,7 @@
 @extends('layouts.apps')
 
+@section('title', 'Riwayat')
+
 @section('content')
     <div class="pt-6 px-4 w-full">
         <h1 class="text-xl font-bold text-gray-800 mb-6">Riwayat Upload</h1>

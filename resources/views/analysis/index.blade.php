@@ -1,5 +1,7 @@
 @extends('layouts.apps')
 
+@section('title', 'Analisis')
+
 @section('content')
     @php
         const EUCS_DIMENSIONS = [
