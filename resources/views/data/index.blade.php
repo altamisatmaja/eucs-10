@@ -1,15 +1,16 @@
-@extends('layouts.app')
+@extends('layouts.apps')
 
 @section('title', 'Data')
 
 @section('content')
-    <div class="bg-white  rounded overflow-hidden mb-8  max-w-7xl mx-auto mt-14">
-        <div class="container mx-auto">
+    <div class="pt-6 px-4">
+        <h1 class="text-xl font-bold text-gray-800 mb-6">Data yang diupload</h1>
+        <div class="w-full">
             @if (!request()->has('references') && empty($formattedData))
                 <div class="flex flex-col">
-                    <div class="rounded justify-center items-center">
+                    <div class="">
                         <div
-                            class="flex-grow container mx-auto px-4 py-6 border border-gray-300 rounded justify-center items-center max-w-7xl">
+                            class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8">
                             <h1 class="text-2xl font-bold text-gray-800 mb-6">Selamat datang, {{ $user->name ?? 'Tamu' }}
                             </h1>
                             <p>Harap upload file terlebih dahulu ya!
@@ -29,11 +30,11 @@
                                 class="btn btn-sm btn-primary"></a>
                         </div>
                     </div>
-                    <div class="bg-white overflow-hidden mb-8">
+                    <div class="bg-white overflow-hidden mb-8 rounded-lg">
                         <div class="overflow-x-auto">
                             <div class="">
                                 <table class="min-w-full rounded border">
-                                    <thead class="bg-green-600">
+                                    <thead class="bg-green-700">
                                         <tr>
                                             @if (isset($formattedData[$recordId]))
                                                 @php

@@ -1,15 +1,15 @@
-@extends('layouts.app')
+@extends('layouts.apps')
 
 @section('title', 'Edit Data')
 
 @section('content')
-    <div class="flex flex-col min-h-screen w-full mt-14">
-        <div class="flex justify-center">
+    <div class="flex flex-col min-h-screen w-full px-6 py-4">
+        <div class="text-white">
+                        <h2 class="text-xl text-black font-semibold">Edit Data Responden</h2>
+                    </div>
+        <div class="flex ">
             <div class="pb-10 pt-3">
                 <div class="bg-white rounded-lg overflow-hidden border">
-                    <div class="bg-green-600 text-white px-6 py-4">
-                        <h2 class="text-xl font-semibold">Edit Data Responden</h2>
-                    </div>
 
                     <div class="p-6">
                         <form method="POST" action="{{ route('data.updateRespondent', $id) }}">

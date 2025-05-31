@@ -1,13 +1,19 @@
-@extends('layouts.app')
+@extends('layouts.apps')
 
 @section('title', 'Hasil Analisis EUCS')
 
 @section('content')
-    <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8 max-w-7xl mx-auto mt-8 p-6">
+    <div class="w-full pt-6 px-4">
         @if (!request()->has('references'))
-            <div class="text-center p-8 bg-gray-50 rounded-lg border border-gray-200">
-                <h1 class="text-2xl font-bold text-gray-800 mb-4">Selamat datang, {{ $user->name ?? 'Tamu' }}</h1>
-                <p class="text-gray-600">Silakan upload file terlebih dahulu untuk melihat hasil analisis EUCS.</p>
+            <div class="flex flex-col">
+                <div class="">
+                    <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8">
+                        <h1 class="text-2xl font-bold text-gray-800 mb-6">Selamat datang, {{ $user->name ?? 'Tamu' }}
+                        </h1>
+                        <p>Harap upload file terlebih dahulu ya!
+                        </p>
+                    </div>
+                </div>
             </div>
         @elseif(isset($errorMessage))
             <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
@@ -32,13 +38,12 @@
             <div class="mb-8">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-bold text-gray-800">Hasil Analisis EUCS</h2>
-                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">Reference:
-                        {{ $reference }}</span>
+                    
                 </div>
 
                 <div class="overflow-x-auto shadow-md rounded-lg">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-green-600">
+                        <thead class="bg-green-700">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">No
                                 </th>

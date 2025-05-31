@@ -1,25 +1,27 @@
-@extends('layouts.app')
+@extends('layouts.apps')
 
 @section('title', 'Beranda')
 
 @section('content')
-    <div class="flex flex-col min-h-screen min-w-full py-5  max-w-7xl">
-        <div class="container mx-auto">
-            <div class="py-6 rounded justify-center items-center">
-                <!-- component -->
-                <div classname="bg-white flex flex-col justify-center items-stretch ">
-                    <section class="py-24 flex items-center justify-center bg-white">
-                        <div class="mx-auto">
-                            <div class="text-center">
-                                <p class="text-lg font-medium leading-8 text-green-600/95">Selamat datang di Aplikasi EUCS,
-                                    {{ auth()->user()->name ?? 'Tamu' }}</p>
-                                <h1 class="mt-3 text-[3.5rem] font-bold leading-[4rem] tracking-tight text-black">
-                                    Mulai coba perhitungan ECUS secara online</h1>
-                                <p class="mt-3 text-lg leading-relaxed text-slate-400">Dapatkan hasil perhitungan secara
-                                    instan melalui data berformat csv yang Anda upload!</p>
-                            </div>
-
-                            <div class="mt-6 flex items-center justify-center gap-4">
+    <main class="p-4 sm:p-6 xl:p-8">
+        <div class="">
+            <div class="w-full">
+                <div class="bg-white  rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="">
+                            <p class="text-lg font-medium leading-8 text-green-600/95">Selamat datang di Kalkulator EUCS,
+                                {{ auth()->user()->name ?? 'Tamu' }}</p>
+                            <h1 class="mt-3 text-[3.5rem] font-bold leading-[4rem] tracking-tight text-black">
+                                Mulai coba Kalkulator ECUS secara online</h1>
+                            <p class="mt-3 text-lg leading-relaxed text-slate-400">Dapatkan hasil perhitungan secara
+                                instan melalui data berformat csv yang Anda upload!</p>
+                        </div>
+                    </div>
+                </div>
+                <div classname="bg-white flex flex-col items-stretch ">
+                    <section class="flex  bg-white rounded-lg ">
+                        <div class="">
+                            <div class="flex gap-4">
                                 @auth
                                     @if (!request()->has('references'))
                                         <div class="text-center mb-2">
@@ -45,7 +47,7 @@
                                                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
                                                         </path>
                                                     </svg>
-                                                    Clear
+                                                    Bersihkan
                                                 </button>
                                             </a>
                                         </div>
@@ -68,12 +70,12 @@
                     @if (request()->has('references'))
                         <!-- Show records and tables only if they exist (when reference parameter exists) -->
                         @foreach ($recordIds as $recordId)
-                            <div class="bg-white shadow-md rounded-lg overflow-hidden mb-8  max-w-7xl mx-auto">
+                            <div class="bg-white shadow-md rounded-lg overflow-hidden mb-8   mx-auto">
                                 <h1 class="mt-3 text-[1.5rem] font-bold leading-[4rem] tracking-tight text-black">
                                     Data yang Anda upload 👇</h1>
                                 <div class="overflow-x-auto rounded border">
                                     <table class="min-w-full divide-y divide-gray-200 ">
-                                        <thead class="bg-green-600">
+                                        <thead class="bg-green-700">
                                             <tr>
                                                 <th scope="col"
                                                     class="font-bold px-2 py-3 text-left text-xs text-white uppercase tracking-wider">
@@ -138,32 +140,65 @@
                     @endif
                 @endauth
             </div>
+        </div>
+    </main>
+    
+    <!-- Upload Modal - Using conditional rendering instead of hidden -->
+    @if(false) <!-- This will prevent the modal from rendering initially -->
+    <div id="uploadModal" class="fixed inset-0 z-50 flex items-center justify-center">
+        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <div class="bg-white rounded-lg shadow-xl sm:max-w-lg sm:w-full m-4 relative z-10">
+            <form action="{{ route('data.upload') }}" method="POST" enctype="multipart/form-data" class="p-6">
+                @csrf
+                <div class="mb-4">
+                    <h3 class="text-lg font-medium text-gray-900">Upload Data</h3>
+                </div>
 
-            <!-- Upload Modal -->
-            <div id="uploadModal" class="fixed inset-0 z-50 hidden">
-                <div class="flex items-center justify-center min-h-screen">
-                    <!-- Background overlay -->
+                <div class="space-y-4">
+                    <div>
+                        <label for="file" class="block text-sm font-medium text-gray-700 mb-1">Pilih File
+                            Excel (.xls, .xlsx, csv)</label>
+                        <input type="file" id="file" name="file" required
+                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" onclick="closeModal()"
+                        class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        Tutup
+                    </button>
+                    <button type="submit"
+                        class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-700 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        Upload
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
+@endsection
+
+@section('scripts')
+    <script>
+        // Modal functions - now we'll create the modal dynamically
+        function openModal() {
+            const modalHtml = `
+                <div id="uploadModal" class="fixed inset-0 z-50 flex items-center justify-center">
                     <div class="fixed inset-0 bg-black bg-opacity-50" onclick="closeModal()"></div>
-
-                    <!-- Modal content -->
-                    <div class="bg-white rounded-lg shadow-xl transform transition-all sm:max-w-lg sm:w-full m-4 relative">
-                        <form action="{{ route('data.upload') }}" method="POST" enctype="multipart/form-data"
-                            class="p-6">
+                    <div class="bg-white rounded-lg shadow-xl sm:max-w-lg sm:w-full m-4 relative z-10">
+                        <form action="{{ route('data.upload') }}" method="POST" enctype="multipart/form-data" class="p-6">
                             @csrf
                             <div class="mb-4">
                                 <h3 class="text-lg font-medium text-gray-900">Upload Data</h3>
                             </div>
-
                             <div class="space-y-4">
                                 <div>
-                                    <label for="file" class="block text-sm font-medium text-gray-700 mb-1">Pilih File
-                                        Excel
-                                        (.xls, .xlsx, csv)</label>
+                                    <label for="file" class="block text-sm font-medium text-gray-700 mb-1">Pilih File Excel (.xls, .xlsx, csv)</label>
                                     <input type="file" id="file" name="file" required
                                         class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
                                 </div>
                             </div>
-
                             <div class="mt-6 flex justify-end space-x-3">
                                 <button type="button" onclick="closeModal()"
                                     class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
@@ -177,37 +212,34 @@
                         </form>
                     </div>
                 </div>
-            </div>
-        </div>
-    @endsection
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            document.body.classList.add('overflow-hidden');
+        }
 
-    @section('scripts')
-        <script>
-            // Modal functions
-            function openModal() {
-                document.getElementById('uploadModal').classList.remove('hidden');
-                document.body.classList.add('overflow-hidden');
-            }
-
-            function closeModal() {
-                document.getElementById('uploadModal').classList.add('hidden');
+        function closeModal() {
+            const modal = document.getElementById('uploadModal');
+            if (modal) {
+                modal.remove();
                 document.body.classList.remove('overflow-hidden');
             }
+        }
 
-            // Event listeners
-            document.addEventListener('DOMContentLoaded', function() {
-                // Open modal
-                const uploadBtn = document.getElementById('openUploadModal');
-                if (uploadBtn) {
-                    uploadBtn.addEventListener('click', openModal);
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Open modal
+            const uploadBtn = document.getElementById('openUploadModal');
+            if (uploadBtn) {
+                uploadBtn.addEventListener('click', openModal);
+            }
+
+            // Close modal with ESC key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
                 }
-
-                // Close modal with ESC key
-                document.addEventListener('keydown', function(e) {
-                    if (e.key === 'Escape') {
-                        closeModal();
-                    }
-                });
             });
-        </script>
-    @endsection
+        });
+    </script>
+@endsection
