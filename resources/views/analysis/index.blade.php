@@ -61,8 +61,6 @@
                                 </th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Max
                                 </th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Std
-                                    Dev</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -86,8 +84,7 @@
                                     </td>
                                     <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ $stats['min'] }}</td>
                                     <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ $stats['max'] }}</td>
-                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ round($stats['std_dev'], 2) }}</td>
+                                    
                                 </tr>
                             @endforeach
                         </tbody>

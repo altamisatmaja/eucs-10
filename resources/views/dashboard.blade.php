@@ -70,70 +70,77 @@
                     @if (request()->has('references'))
                         <!-- Show records and tables only if they exist (when reference parameter exists) -->
                         @foreach ($recordIds as $recordId)
-                            <div class="bg-white shadow-md rounded-lg overflow-hidden mb-8   mx-auto">
+                            <div class="bg-white shadow-md rounded-lg overflow-hidden mb-8 mx-auto">
                                 <h1 class="mt-3 text-[1.5rem] font-bold leading-[4rem] tracking-tight text-black">
                                     Data yang Anda upload 👇</h1>
                                 <div class="overflow-x-auto rounded border">
-                                    <table class="min-w-full divide-y divide-gray-200 ">
-                                        <thead class="bg-green-700">
-                                            <tr>
-                                                <th scope="col"
-                                                    class="font-bold px-2 py-3 text-left text-xs text-white uppercase tracking-wider">
-                                                    No
-                                                </th>
-                                                @if (isset($formattedData[$recordId]))
-                                                    @php
-                                                        // Get all variables without type filtering
-                                                        $variables = array_keys($formattedData[$recordId]);
-                                                        sort($variables);
-
-                                                        // Format variable names for headers
-                                                        $displayVariables = array_map(function ($var) {
-                                                            if (preg_match('/^([xy])(\d)(\d)$/', $var, $matches)) {
-                                                                $prefix = strtoupper($matches[1]);
-                                                                $mainNum = $matches[2];
-                                                                $subNum = $matches[3];
-                                                                return "{$prefix}{$mainNum}.{$subNum}";
-                                                            }
-                                                            return $var;
-                                                        }, $variables);
-                                                    @endphp
-
-                                                    @foreach ($displayVariables as $header)
+                                    <div class="inline-block min-w-full align-middle">
+                                        <div class="overflow-hidden">
+                                            <table class="min-w-full divide-y divide-gray-200">
+                                                <thead class="bg-green-700">
+                                                    <tr>
                                                         <th scope="col"
-                                                            class="font-bold px-2 py-3 text-left text-xs text-white uppercase tracking-wider">
-                                                            {{ $header }}
+                                                            class="sticky top-0 z-10 font-bold px-2 py-3 text-left text-xs text-white uppercase tracking-wider">
+                                                            No
                                                         </th>
-                                                    @endforeach
-                                                @endif
-                                            </tr>
-                                        </thead>
-                                        <tbody class="bg-white divide-y divide-gray-200">
-                                            @if (isset($formattedData[$recordId]))
-                                                @php
-                                                    $firstVar = $variables[0] ?? null;
-                                                    $respondentCount = $firstVar
-                                                        ? count($formattedData[$recordId][$firstVar])
-                                                        : 0;
-                                                @endphp
+                                                        @if (isset($formattedData[$recordId]))
+                                                            @php
+                                                                // Get all variables without type filtering
+                                                                $variables = array_keys($formattedData[$recordId]);
+                                                                sort($variables);
 
-                                                @for ($i = 0; $i < $respondentCount; $i++)
-                                                    <tr
-                                                        class="{{ $i % 2 === 0 ? 'bg-white' : 'bg-gray-50' }} hover:bg-gray-100">
-                                                        <td
-                                                            class="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                            {{ $i + 1 }}
-                                                        </td>
-                                                        @foreach ($variables as $var)
-                                                            <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                                {{ $formattedData[$recordId][$var][$i] ?? '' }}
-                                                            </td>
-                                                        @endforeach
+                                                                // Format variable names for headers
+                                                                $displayVariables = array_map(function ($var) {
+                                                                    if (
+                                                                        preg_match('/^([xy])(\d)(\d)$/', $var, $matches)
+                                                                    ) {
+                                                                        $prefix = strtoupper($matches[1]);
+                                                                        $mainNum = $matches[2];
+                                                                        $subNum = $matches[3];
+                                                                        return "{$prefix}{$mainNum}.{$subNum}";
+                                                                    }
+                                                                    return $var;
+                                                                }, $variables);
+                                                            @endphp
+
+                                                            @foreach ($displayVariables as $header)
+                                                                <th scope="col"
+                                                                    class="sticky top-0 z-10 font-bold px-2 py-3 text-left text-xs text-white uppercase tracking-wider">
+                                                                    {{ $header }}
+                                                                </th>
+                                                            @endforeach
+                                                        @endif
                                                     </tr>
-                                                @endfor
-                                            @endif
-                                        </tbody>
-                                    </table>
+                                                </thead>
+                                                <tbody class="bg-white divide-y divide-gray-200">
+                                                    @if (isset($formattedData[$recordId]))
+                                                        @php
+                                                            $firstVar = $variables[0] ?? null;
+                                                            $respondentCount = $firstVar
+                                                                ? count($formattedData[$recordId][$firstVar])
+                                                                : 0;
+                                                        @endphp
+
+                                                        @for ($i = 0; $i < $respondentCount; $i++)
+                                                            <tr
+                                                                class="{{ $i % 2 === 0 ? 'bg-white' : 'bg-gray-50' }} hover:bg-gray-100">
+                                                                <td
+                                                                    class="sticky left-0 z-5 px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-900 bg-white">
+                                                                    {{ $i + 1 }}
+                                                                </td>
+                                                                @foreach ($variables as $var)
+                                                                    <td
+                                                                        class="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                                        {{ $formattedData[$recordId][$var][$i] ?? '' }}
+                                                                    </td>
+                                                                @endforeach
+                                                            </tr>
+                                                        @endfor
+                                                    @endif
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
@@ -142,40 +149,41 @@
             </div>
         </div>
     </main>
-    
+
     <!-- Upload Modal - Using conditional rendering instead of hidden -->
-    @if(false) <!-- This will prevent the modal from rendering initially -->
-    <div id="uploadModal" class="fixed inset-0 z-50 flex items-center justify-center">
-        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
-        <div class="bg-white rounded-lg shadow-xl sm:max-w-lg sm:w-full m-4 relative z-10">
-            <form action="{{ route('data.upload') }}" method="POST" enctype="multipart/form-data" class="p-6">
-                @csrf
-                <div class="mb-4">
-                    <h3 class="text-lg font-medium text-gray-900">Upload Data</h3>
-                </div>
-
-                <div class="space-y-4">
-                    <div>
-                        <label for="file" class="block text-sm font-medium text-gray-700 mb-1">Pilih File
-                            Excel (.xls, .xlsx, csv)</label>
-                        <input type="file" id="file" name="file" required
-                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+    @if (false)
+        <!-- This will prevent the modal from rendering initially -->
+        <div id="uploadModal" class="fixed inset-0 z-50 flex items-center justify-center">
+            <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+            <div class="bg-white rounded-lg shadow-xl sm:max-w-lg sm:w-full m-4 relative z-10">
+                <form action="{{ route('data.upload') }}" method="POST" enctype="multipart/form-data" class="p-6">
+                    @csrf
+                    <div class="mb-4">
+                        <h3 class="text-lg font-medium text-gray-900">Upload Data</h3>
                     </div>
-                </div>
 
-                <div class="mt-6 flex justify-end space-x-3">
-                    <button type="button" onclick="closeModal()"
-                        class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                        Tutup
-                    </button>
-                    <button type="submit"
-                        class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-700 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                        Upload
-                    </button>
-                </div>
-            </form>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="file" class="block text-sm font-medium text-gray-700 mb-1">Pilih File
+                                Excel (.xls, .xlsx, csv)</label>
+                            <input type="file" id="file" name="file" required
+                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button type="button" onclick="closeModal()"
+                            class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            Tutup
+                        </button>
+                        <button type="submit"
+                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-700 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            Upload
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
     @endif
 @endsection
 
@@ -213,7 +221,7 @@
                     </div>
                 </div>
             `;
-            
+
             document.body.insertAdjacentHTML('beforeend', modalHtml);
             document.body.classList.add('overflow-hidden');
         }
