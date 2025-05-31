@@ -28,6 +28,14 @@ class AnalysisController extends Controller
         ['min' => 0, 'max' => 24.99, 'label' => 'Sangat Rendah'],
     ];
 
+    const SATISFACTION_LEVELS = [
+        ['min' => 4.1, 'max' => 5.0, 'label' => 'Sangat Puas'],
+        ['min' => 3.1, 'max' => 4.0, 'label' => 'Puas'],
+        ['min' => 2.1, 'max' => 3.0, 'label' => 'Cukup Puas'],
+        ['min' => 1.1, 'max' => 2.0, 'label' => 'Kurang Puas'],
+        ['min' => 0.0, 'max' => 1.0, 'label' => 'Sangat Tidak Puas'],
+    ];
+
     /**
      * Display EUCS analysis results
      *
@@ -198,7 +206,7 @@ class AnalysisController extends Controller
      */
     protected function calculateAchievement(Collection $groupedData): array
     {
-        return $groupedData->map(function ($values) {
+        return $groupedData->map(function ($values, $dimension) {
             $numericValues = $values->pluck('value')->filter()->values()->toArray();
             $n = count($numericValues);
 
@@ -206,7 +214,8 @@ class AnalysisController extends Controller
                 return [
                     'mean' => 0,
                     'achievement_percentage' => 0,
-                    'interpretation' => 'Tidak Ada Data'
+                    'interpretation' => 'Tidak Ada Data',
+                    'satisfaction' => 'Tidak Ada Data'
                 ];
             }
 
@@ -214,27 +223,67 @@ class AnalysisController extends Controller
             $achievementScore = ($mean / self::MAX_SCALE) * 100;
 
             return [
-                'mean' => $mean,
-                'achievement_percentage' => $achievementScore,
-                'interpretation' => $this->interpretAchievement($achievementScore)
+                'mean' => round($mean, 2),
+                'achievement_percentage' => round($achievementScore, 2),
+                'interpretation' => $this->interpretAchievement($achievementScore),
+                'satisfaction' => $this->interpretSatisfaction($mean)
             ];
         })->toArray();
     }
 
-    /**
-     * Interpret achievement score
-     *
-     * @param float $percentage
-     * @return string
-     */
-    protected function interpretAchievement(float $percentage): string
+    protected function interpretSatisfaction(float $meanScore): string
     {
-        foreach (self::ACHIEVEMENT_LEVELS as $level) {
-            if ($percentage > $level['min'] && $percentage <= $level['max']) {
+        foreach (self::SATISFACTION_LEVELS as $level) {
+            if ($meanScore >= $level['min'] && $meanScore <= $level['max']) {
                 return $level['label'];
             }
         }
 
-        return 'Tidak Diketahui';
+        // Handle nilai di luar range yang ditentukan
+        if ($meanScore > 5.0) {
+            return 'Sangat Puas'; // Jika lebih dari skala maksimum
+        } elseif ($meanScore < 0) {
+            return 'Sangat Tidak Puas'; // Jika kurang dari skala minimum
+        }
+
+        // Fallback untuk nilai di antara range yang tidak tercover
+        return 'Cukup Puas';
+    }
+
+    protected function interpretAchievement(float $percentage): string
+    {
+        foreach (self::ACHIEVEMENT_LEVELS as $level) {
+            if ($percentage >= $level['min'] && $percentage <= $level['max']) {
+                return $level['label'];
+            }
+        }
+
+        // Handle nilai di luar range yang ditentukan
+        if ($percentage > 100) {
+            return 'Sangat Tinggi'; // Jika lebih dari 100%
+        } elseif ($percentage < 0) {
+            return 'Sangat Rendah'; // Jika kurang dari 0%
+        }
+
+        // Fallback untuk nilai di antara range yang tidak tercover
+        return 'Rendah';
+    }
+
+    public function getSatisfactionColorClass($satisfaction)
+    {
+        switch ($satisfaction) {
+            case 'Sangat Puas':
+                return 'text-green-600';
+            case 'Puas':
+                return 'text-blue-600';
+            case 'Cukup Puas':
+                return 'text-yellow-600';
+            case 'Kurang Puas':
+                return 'text-orange-600';
+            case 'Sangat Tidak Puas':
+                return 'text-red-600';
+            default:
+                return 'text-gray-600';
+        }
     }
 }

@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="pt-6 px-4">
-        <h1 class="text-xl font-bold text-gray-800 mb-6">Data yang diupload</h1>
+        
         <div class="w-full">
             @if (!request()->has('references') && empty($formattedData))
                 <div class="flex flex-col">
@@ -24,6 +24,7 @@
                 </div>
             @else
                 @foreach ($recordIds as $recordId)
+                <h1 class="text-xl font-bold text-gray-800 mb-6">Data yang diupload</h1>
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div>
                             <a href="{{ route('data.index', ['type' => $type, 'references' => $recordId]) }}"

@@ -1,111 +1,119 @@
 @extends('layouts.apps')
 
-@section('title', 'Hasil Analisis EUCS')
-
 @section('content')
-    <div class="w-full pt-6 px-4">
-        @if (!request()->has('references'))
-            <div class="flex flex-col">
-                <div class="">
-                    <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8">
-                        <h1 class="text-2xl font-bold text-gray-800 mb-6">Selamat datang, {{ $user->name ?? 'Tamu' }}
-                        </h1>
-                        <p>Harap upload file terlebih dahulu ya!
-                        </p>
-                    </div>
-                </div>
-            </div>
-        @elseif(isset($errorMessage))
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                            fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm text-yellow-700">
-                            {{ $errorMessage }}
+    @php
+        const EUCS_DIMENSIONS = [
+            'Content' => ['x11', 'x12', 'x13', 'x14', 'x15'],
+            'Accuracy' => ['x21', 'x22', 'x23', 'x24', 'x25'],
+            'Format' => ['x31', 'x32', 'x33', 'x34', 'x35'],
+            'Ease of Use' => ['x41', 'x42', 'x43', 'x44', 'x45'],
+            'Timeliness' => ['x51', 'x52', 'x53', 'x54', 'x55'],
+            'User Satisfaction' => ['y1', 'y2', 'y3', 'y4', 'y5'],
+        ];
 
-                        </p>
-                    </div>
-                </div>
+        const ACHIEVEMENT_LEVELS = [
+            ['min' => 75.01, 'max' => 100, 'label' => 'Sangat Tinggi'],
+            ['min' => 58.34, 'max' => 75.01, 'label' => 'Tinggi'],
+            ['min' => 41.66, 'max' => 58.34, 'label' => 'Kurang'],
+            ['min' => 24.99, 'max' => 41.66, 'label' => 'Rendah'],
+            ['min' => 0, 'max' => 24.99, 'label' => 'Sangat Rendah'],
+        ];
+
+        const SATISFACTION_LEVELS = [
+            ['min' => 4.1, 'max' => 5.0, 'label' => 'Sangat Puas'],
+            ['min' => 3.1, 'max' => 4.0, 'label' => 'Puas'],
+            ['min' => 2.1, 'max' => 3.0, 'label' => 'Cukup Puas'],
+            ['min' => 1.1, 'max' => 2.0, 'label' => 'Kurang Puas'],
+            ['min' => 0.0, 'max' => 1.0, 'label' => 'Sangat Tidak Puas'],
+        ];
+    @endphp
+    <div class="pt-6 px-4 w-full">
+        @if (!$dataExists)
+            <div class="bg-white rounded-lg shadow p-6 mb-6">
+                <div class="text-red-500 font-medium mb-2">Error</div>
+                <p>{{ $errorMessage ?? 'Terjadi kesalahan dalam memproses data' }}</p>
             </div>
         @else
-            <div class="mb-8">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold text-gray-800">Hasil Analisis EUCS</h2>
-                    
-                </div>
+            <h1 class="text-2xl font-bold text-gray-800 mb-6">Hasil Analisis EUCS</h1>
 
-                <div class="overflow-x-auto shadow-md rounded-lg">
-                    <table class="min-w-full divide-y divide-gray-200">
+            <!-- Summary Card -->
+            <div class="bg-white rounded-lg  mb-6">
+                <h2 class="text-xl font-semibold mb-4">Ringkasan Hasil</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @foreach ($results['statistics'] as $dimension => $stats)
+                        <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                            <h3 class="font-medium text-lg text-green-700">{{ $dimension }}</h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-600">Rata-rata:
+                                    <span class="font-medium">{{ $results['achievement'][$dimension]['mean'] }}</span>
+                                </p>
+                                <p class="text-sm text-gray-600">Tingkat Pencapaian:
+                                    <span
+                                        class="font-medium">{{ $results['achievement'][$dimension]['achievement_percentage'] }}%</span>
+                                </p>
+                                <p class="text-sm text-gray-600">Interpretasi:
+                                    <span
+                                        class="font-medium">{{ $results['achievement'][$dimension]['interpretation'] }}</span>
+                                </p>
+                                <p class="text-sm text-gray-600">Tingkat Kepuasan:
+                                    <span class="font-medium @satisfactionColor($results['achievement'][$dimension]['satisfaction'])">
+                                        {{ $results['achievement'][$dimension]['satisfaction'] }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <!-- Detailed Statistics -->
+            <div class="bg-white rounded-lg mb-6">
+                <h2 class="text-xl font-semibold mb-4">Statistik Detail</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full rounded border">
                         <thead class="bg-green-700">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">No
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    Dimensi</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    Rata-rata</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    Pencapaian</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    Interpretasi</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    Kepuasan</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Min
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                    Dimensi EUCS</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Min
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Max
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Max
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Mean
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                    Varian</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Std
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Std
                                     Dev</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                    Capaian</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                    Kategori</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach ($results['statistics'] as $dimension => $stats)
-                                @php
-                                    $achievement = $results['achievement'][$dimension] ?? null;
-                                    $interpretation = $achievement['interpretation'] ?? '';
-
-                                    $colorClasses = [
-                                        'Sangat Tinggi' => 'bg-green-100 text-green-800',
-                                        'Tinggi' => 'bg-blue-100 text-blue-800',
-                                        'Kurang' => 'bg-yellow-100 text-yellow-800',
-                                        'Rendah' => 'bg-orange-100 text-orange-800',
-                                        'Sangat Rendah' => 'bg-red-100 text-red-800',
-                                    ];
-                                    $interpretationClass = $colorClasses[$interpretation] ?? '';
-                                @endphp
                                 <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                        {{ $loop->iteration }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                         {{ $dimension }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $stats['min'] }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $stats['max'] }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ number_format($stats['mean'], 2) }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ number_format($stats['variance'], 2) }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ number_format($stats['std_dev'], 2) }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                                        {{ $achievement ? number_format($achievement['achievement_percentage'], 1) . '%' : '-' }}
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ $results['achievement'][$dimension]['mean'] }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        @if ($achievement)
-                                            <span
-                                                class="px-2.5 py-0.5 text-xs font-semibold rounded-full {{ $interpretationClass }}">
-                                                {{ $interpretation }}
-                                            </span>
-                                        @else
-                                            <span class="text-gray-500">-</span>
-                                        @endif
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ $results['achievement'][$dimension]['achievement_percentage'] }}%
                                     </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ $results['achievement'][$dimension]['interpretation'] }}
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                                        <span class="@satisfactionColor($results['achievement'][$dimension]['satisfaction'])">
+                                            {{ $results['achievement'][$dimension]['satisfaction'] }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ $stats['min'] }}</td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ $stats['max'] }}</td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ round($stats['std_dev'], 2) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -113,29 +121,31 @@
                 </div>
             </div>
 
-            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <h3 class="font-medium text-gray-800 mb-2">Kategori Capaian:</h3>
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-2">
-                    <div class="flex items-center">
-                        <span class="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
-                        <span class="text-sm">> 75% (Sangat Tinggi)</span>
+            <!-- Interpretation Guide -->
+            <div class="bg-white rounded-lg  pb-6">
+                <h2 class="text-xl font-semibold mb-4">Panduan Interpretasi</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-medium text-lg mb-2">Tingkat Pencapaian</h3>
+                        <ul class="space-y-2">
+                            @foreach (ACHIEVEMENT_LEVELS as $level)
+                                <li class="text-sm">
+                                    <span class="font-medium">{{ $level['label'] }}:</span>
+                                    {{ $level['min'] }}% - {{ $level['max'] }}%
+                                </li>
+                            @endforeach
+                        </ul>
                     </div>
-                    <div class="flex items-center">
-                        <span class="w-3 h-3 bg-blue-500 rounded-full mr-2"></span>
-                        <span class="text-sm">58.34% - 75% (Tinggi)</span>
-                    </div>
-                    <div class="flex items-center">
-                        <span class="w-3 h-3 bg-yellow-500 rounded-full mr-2"></span>
-                        <span class="text-sm">41.66% - 58.33% (Kurang)</span>
-                    </div>
-                    <div class="flex items-center">
-                        <span class="w-3 h-3 bg-orange-500 rounded-full mr-2"></span>
-                        <span class="text-sm">25% - 41.65% (Rendah)</span>
-                    </div>
-                    <div class="flex items-center">
-                        <span class="w-3 h-3 bg-red-500 rounded-full mr-2"></span>
-                        <span class="text-sm">
-                            < 25% (Sangat Rendah)</span>
+                    <div>
+                        <h3 class="font-medium text-lg mb-2">Tingkat Kepuasan</h3>
+                        <ul class="space-y-2">
+                            @foreach (SATISFACTION_LEVELS as $level)
+                                <li class="text-sm">
+                                    <span class="font-medium">{{ $level['label'] }}:</span>
+                                    Skor {{ $level['min'] }} - {{ $level['max'] }}
+                                </li>
+                            @endforeach
+                        </ul>
                     </div>
                 </div>
             </div>
