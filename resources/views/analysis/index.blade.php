@@ -52,15 +52,7 @@
                                 <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                     Rata-rata</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                    Pencapaian</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                    Interpretasi</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                     Kepuasan</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Min
-                                </th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Max
-                                </th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -71,19 +63,11 @@
                                     <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                                         {{ $results['achievement'][$dimension]['mean'] }}
                                     </td>
-                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $results['achievement'][$dimension]['achievement_percentage'] }}%
-                                    </td>
-                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $results['achievement'][$dimension]['interpretation'] }}
-                                    </td>
                                     <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
                                         <span class="@getSatisfactionColorClass($results['achievement'][$dimension]['satisfaction'])">
                                             {{ $results['achievement'][$dimension]['satisfaction'] }}
                                         </span>
                                     </td>
-                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ $stats['min'] }}</td>
-                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ $stats['max'] }}</td>
                                     
                                 </tr>
                             @endforeach
